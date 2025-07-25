@@ -1,10 +1,6 @@
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-  integer,
-} from "drizzle-orm/pg-core";
+import { pgEnum, primaryKey, pgTable, text, timestamp, boolean, unique, uuid } from "drizzle-orm/pg-core";
+
+export const contentTypeEnum = pgEnum("content-type", ["article", "video"])
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -68,10 +64,40 @@ export const verification = pgTable("verification", {
 
 // Above tables were created by Better-Auth
 
+export const pocketItem = pgTable("pocket_item", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  type: contentTypeEnum().notNull(),
+  description: text("description").default("").notNull(),
+  completed: boolean("completed").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull()
+})
+
+export const pocketTag = pgTable("pocket_tag", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull()
+}, (t) => [
+  unique().on(t.userId, t.name)
+])
+
+export const pocketItemToPocketTag = pgTable("pocket_item_to_ocket_tag", {
+  pocketItemId: uuid("pocket_item_id").notNull().references(() => pocketItem.id, { onDelete: "cascade" }),
+  pocketTagId: uuid("pocket_tag_id").notNull().references(() => pocketTag.id, { onDelete: "cascade" })
+}, (t) => [
+  primaryKey({ columns: [t.pocketItemId, t.pocketTagId] })
+])
+
 export const schema = {
   user,
   session,
   account,
   verification,
   // Tables above this comment were built by 'Better Auth' for their service
+  pocketItem,
+  pocketTag,
+  pocketItemToPocketTag
 }
