@@ -8,3 +8,5 @@ export const signIn = async () => {
     callbackURL: "/dashboard"
   })
 }
+
+export const { useSession } = authClient

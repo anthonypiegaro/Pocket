@@ -1,29 +1,18 @@
-import { Suspense } from "react"
-import { headers } from "next/headers"
+"use client"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { auth } from "@/lib/auth"
+import { useSession } from "@/lib/auth-client"
 import GoogleAuthButton from "@/components/google-auth-button"
 
-export async function Profile() {
-  return (
-    <Suspense fallback={<SignInButton />}>
-      <ActionButton />
-    </Suspense>
-  )
-}
+export function Profile() {
+  const session = useSession()
 
-async function ActionButton() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) {
-    return <SignInButton />
+  if (session.data?.user) {
+    return <DashboardButton />
   }
 
-  return <DashboardButton />
+  return <SignInButton />
 }
 
 function SignInButton() {
@@ -32,8 +21,10 @@ function SignInButton() {
 
 function DashboardButton() {
   return (
-    <Button asChild>
-      <Link href="/dashboard">Dashboard</Link>
+    <Button
+    asChild
+    >
+      <Link href="/dashboard">Go To Dashboard</Link>
     </Button>
   )
 }

@@ -1,12 +1,5 @@
-import { ThemeToggle } from "@/components/theme-toggle";
-import { Profile } from "@/app/landing-page/profile";
+import { LandingPage } from "./landing-page/landing-page"
 
 export default function Page() {
-  return (
-    <div>
-      <h1>Landing Page</h1>
-      <ThemeToggle />
-      <Profile />
-    </div>
-  );
+  return <LandingPage />
 }
