@@ -298,38 +298,25 @@ export function DashboardWrapper({
           </Dialog>
         </div>
 
-        {/* Items Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredItems.map((item) => (
             <Card
               key={item.id}
-              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20"
+              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300"
             >
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    {item.type === "video" ? (
-                      <Video className="h-4 w-4 text-red-500 shrink-0" />
-                    ) : (
-                      <FileText className="h-4 w-4 text-blue-500 shrink-0" />
-                    )}
-                    <CardTitle className="text-sm line-clamp-2 leading-tight">{item.name}</CardTitle>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1 grow truncate">
+                    {item.type === "article" && <FileText className="h-4 w-4 text-red-500"/>}
+                    {item.type === "video" && <Video className="h-4 w-4 text-blue-500"/>}
+                    {item.name}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Button variant="ghost" size="sm" onClick={() => null} className="h-8 w-8 p-0">
-                      {item.completed ? (
-                        <Eye className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <EyeOff className="h-3 w-3 text-muted-foreground" />
-                      )}
+                  <div className="flex">
+                    <Button variant="ghost">
+                      {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => null}
-                      className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="h-3 w-3 text-destructive" />
+                    <Button variant="ghost">
+                      <X className="text-destructive" />
                     </Button>
                   </div>
                 </div>
