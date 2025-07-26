@@ -23,6 +23,7 @@ export const pocketItems: PocketItem[] = [
     description: "A deep dive into generics in TypeScript.",
     completed: false,
     tags: [pocketTags[0], pocketTags[4]],
+    createdAt: new Date("2025-07-01"),
   },
   {
     id: "item-2",
@@ -32,6 +33,7 @@ export const pocketItems: PocketItem[] = [
     description: "Comprehensive guide to React Hooks.",
     completed: true,
     tags: [pocketTags[1], pocketTags[4]],
+    createdAt: new Date("2025-07-02"),
   },
   {
     id: "item-3",
@@ -41,6 +43,7 @@ export const pocketItems: PocketItem[] = [
     description: "How to use the Pomodoro technique effectively.",
     completed: false,
     tags: [pocketTags[2]],
+    createdAt: new Date("2025-07-03"),
   },
   {
     id: "item-4",
@@ -50,6 +53,7 @@ export const pocketItems: PocketItem[] = [
     description: "Exploring AI applications in daily routines.",
     completed: false,
     tags: [pocketTags[3]],
+    createdAt: new Date("2025-07-04"),
   },
   {
     id: "item-5",
@@ -59,6 +63,7 @@ export const pocketItems: PocketItem[] = [
     description: "Comparing TypeScript and JavaScript for web development.",
     completed: true,
     tags: [pocketTags[0], pocketTags[1]],
+    createdAt: new Date("2025-07-05"),
   },
   {
     id: "item-6",
@@ -68,6 +73,7 @@ export const pocketItems: PocketItem[] = [
     description: "Step-by-step guide to building REST APIs.",
     completed: false,
     tags: [pocketTags[1], pocketTags[4]],
+    createdAt: new Date("2025-07-06"),
   },
   {
     id: "item-7",
@@ -77,6 +83,7 @@ export const pocketItems: PocketItem[] = [
     description: "Learn how to handle asynchronous code.",
     completed: false,
     tags: [pocketTags[1]],
+    createdAt: new Date("2025-07-07"),
   },
   {
     id: "item-8",
@@ -86,6 +93,7 @@ export const pocketItems: PocketItem[] = [
     description: "Beginner's guide to machine learning concepts.",
     completed: true,
     tags: [pocketTags[3], pocketTags[4]],
+    createdAt: new Date("2025-07-08"),
   },
   {
     id: "item-9",
@@ -95,6 +103,7 @@ export const pocketItems: PocketItem[] = [
     description: "Tips for staying productive while working remotely.",
     completed: false,
     tags: [pocketTags[2]],
+    createdAt: new Date("2025-07-09"),
   },
   {
     id: "item-10",
@@ -104,6 +113,7 @@ export const pocketItems: PocketItem[] = [
     description: "A guide to TypeScript's built-in utility types.",
     completed: true,
     tags: [pocketTags[0]],
+    createdAt: new Date("2025-07-10"),
   },
   {
     id: "item-11",
@@ -113,6 +123,7 @@ export const pocketItems: PocketItem[] = [
     description: "Learn CSS Grid for modern web layouts.",
     completed: false,
     tags: [pocketTags[1], pocketTags[4]],
+    createdAt: new Date("2025-07-11"),
   },
   {
     id: "item-12",
@@ -122,6 +133,7 @@ export const pocketItems: PocketItem[] = [
     description: "Best practices for using Git in projects.",
     completed: false,
     tags: [pocketTags[1], pocketTags[2]],
+    createdAt: new Date("2025-07-12"),
   },
   {
     id: "item-13",
@@ -131,6 +143,7 @@ export const pocketItems: PocketItem[] = [
     description: "Basics of neural networks and deep learning.",
     completed: false,
     tags: [pocketTags[3]],
+    createdAt: new Date("2025-07-13"),
   },
   {
     id: "item-14",
@@ -140,6 +153,7 @@ export const pocketItems: PocketItem[] = [
     description: "Principles for writing maintainable code.",
     completed: true,
     tags: [pocketTags[1], pocketTags[2]],
+    createdAt: new Date("2025-07-14"),
   },
   {
     id: "item-15",
@@ -149,6 +163,7 @@ export const pocketItems: PocketItem[] = [
     description: "Exploring advanced types in TypeScript.",
     completed: false,
     tags: [pocketTags[0]],
+    createdAt: new Date("2025-07-15"),
   },
   {
     id: "item-16",
@@ -158,6 +173,7 @@ export const pocketItems: PocketItem[] = [
     description: "Organize your learning with a personal knowledge base.",
     completed: false,
     tags: [pocketTags[2], pocketTags[4]],
+    createdAt: new Date("2025-07-16"),
   },
   {
     id: "item-17",
@@ -167,6 +183,7 @@ export const pocketItems: PocketItem[] = [
     description: "A guide to deploying applications using Docker.",
     completed: true,
     tags: [pocketTags[1]],
+    createdAt: new Date("2025-07-17"),
   },
   {
     id: "item-18",
@@ -176,6 +193,7 @@ export const pocketItems: PocketItem[] = [
     description: "Discussion on the ethical implications of AI.",
     completed: false,
     tags: [pocketTags[3]],
+    createdAt: new Date("2025-07-18"),
   },
   {
     id: "item-19",
@@ -185,6 +203,7 @@ export const pocketItems: PocketItem[] = [
     description: "How to use TypeScript in React projects.",
     completed: false,
     tags: [pocketTags[0], pocketTags[1]],
+    createdAt: new Date("2025-07-19"),
   },
   {
     id: "item-20",
@@ -194,6 +213,7 @@ export const pocketItems: PocketItem[] = [
     description: "Improve your time management skills.",
     completed: true,
     tags: [pocketTags[2]],
+    createdAt: new Date("2025-07-20"),
   },
 ];
 

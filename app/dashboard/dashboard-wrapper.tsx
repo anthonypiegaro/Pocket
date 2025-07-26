@@ -1,9 +1,16 @@
 "use client"
 
-import { useMemo, useState } from "react"
-import { Filter, Plus, Search } from "lucide-react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { BookHeart, ExternalLink, Eye, EyeOff, FileText, Filter, Plus, Search, Video, X } from "lucide-react"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card"
 import { 
   Dialog, 
   DialogContent, 
@@ -19,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multiselect"
+import { cn } from "@/lib/utils"
 
 export type PocketTag = {
   id: string
@@ -32,6 +40,7 @@ export type PocketItem = {
   type: "article" | "video"
   description: string
   completed: boolean
+  createdAt: Date
   tags: PocketTag[]
 }
 
@@ -47,12 +56,38 @@ export function DashboardWrapper({
   const [typeFilter, setTypeFilter] = useState<Set<PocketItem["type"]>>(new Set(["article", "video"]))
   const [statusFilter, setStatusFilter] = useState<Set<"completed" | "uncompleted">>(new Set(["completed", "uncompleted"]))
   const [tagFilter, setTagFilter] = useState<string[]>([])
+  const [showSearchButton, setShowSearchButton] = useState(false)
+  const filterBar = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!filterBar.current) return
+      const rect = filterBar.current.getBoundingClientRect()
+      setShowSearchButton(rect.top <= 18)
+    }
+
+    window.addEventListener("scroll", handleScroll)
+    handleScroll()
+
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const filteredItems = useMemo(() => {
     return items
+      .filter(item => {
+        if (statusFilter.has("completed") && item.completed) {
+          return true
+        }
+        if (statusFilter.has("uncompleted") && !item.completed) {
+          return true
+        }
+
+        return false
+      })
+      .filter(item => typeFilter.has(item.type))
       .filter(item => item.name.toLowerCase().includes(nameFilter.toLowerCase()))
       .filter(item => tagFilter.every(tagId => item.tags.some(itemTag => itemTag.id === tagId)))
-  }, [items, nameFilter, tagFilter])
+  }, [items, nameFilter, tagFilter, statusFilter, typeFilter])
 
   return (
     <div className="container mx-auto px-4 py-6 z-10 relative">
@@ -83,7 +118,10 @@ export function DashboardWrapper({
           </Dialog>
         </div>
 
-        <div className="flex flex-wrap gap-2 items-center">
+        <div 
+          className="sticky top-4 z-40 flex flex-wrap gap-2 items-center backdrop-blur-sm" 
+          ref={filterBar}
+        >
           <Filter className="h-4 w-4 text-muted-foreground" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -183,7 +221,7 @@ export function DashboardWrapper({
           </DropdownMenu>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="sm:hidden">
+              <Button variant="outline" className="md:hidden">
                 Tags
               </Button>
             </DialogTrigger>
@@ -217,7 +255,7 @@ export function DashboardWrapper({
               </div>
             </DialogContent>
           </Dialog>
-          <div className="hidden sm:block flex gap-2">
+          <div className="hidden md:flex gap-2">
             <MultiSelect 
               options={pocketTags.map(tag => ({ label: tag.name, value: tag.id }))}
               onValueChange={setTagFilter}
@@ -227,22 +265,120 @@ export function DashboardWrapper({
               className="w-sm max-w-sm"
             />
             <Dialog>
+              <DialogTrigger asChild>
+                <Button className="shrink-0">
+                  <Plus className="h-4 w-4" />
+                  Add Pocket Tag
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Tag</DialogTitle>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+          <Dialog>
             <DialogTrigger asChild>
-              <Button className="shrink-0">
-                <Plus className="h-4 w-4" />
-                Add Pocket Tag
+              <Button 
+                variant="outline"
+                className={cn(
+                  "transition-all duration-300 opacity-0 -translate-y-2",
+                  showSearchButton && "opacity-100 translate-y-0"
+                )}
+              >
+                Search
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Add Tag</DialogTitle>
+                <DialogTitle>Search</DialogTitle>
               </DialogHeader>
             </DialogContent>
           </Dialog>
-          </div>
         </div>
 
+        {/* Items Grid */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredItems.map((item) => (
+            <Card
+              key={item.id}
+              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20"
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {item.type === "video" ? (
+                      <Video className="h-4 w-4 text-red-500 shrink-0" />
+                    ) : (
+                      <FileText className="h-4 w-4 text-blue-500 shrink-0" />
+                    )}
+                    <CardTitle className="text-sm line-clamp-2 leading-tight">{item.name}</CardTitle>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <Button variant="ghost" size="sm" onClick={() => null} className="h-8 w-8 p-0">
+                      {item.completed ? (
+                        <Eye className="h-3 w-3 text-green-600" />
+                      ) : (
+                        <EyeOff className="h-3 w-3 text-muted-foreground" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => null}
+                      className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3 text-destructive" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                {item.description && (
+                  <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
+                )}
 
+                <div className="flex flex-wrap gap-1 mb-3">
+                  {item.tags.map((tag) => (
+                    <Badge key={tag.id} variant="secondary" className="text-xs">
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>
+                  <Button variant="ghost" size="sm" asChild className="h-8 px-2">
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {filteredItems.length === 0 && (
+          <div className="text-center py-12">
+            <div className="text-muted-foreground">
+              {items.length === 0 ? (
+                <div>
+                  <BookHeart className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg mb-2">Your pocket is empty</p>
+                  <p className="text-sm">Add your first article or video to get started!</p>
+                </div>
+              ) : (
+                <div>
+                  <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="text-lg mb-2">No items found</p>
+                  <p className="text-sm">Try adjusting your search or filters</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
