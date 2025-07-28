@@ -8,8 +8,7 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle
+  CardHeader
 } from "@/components/ui/card"
 import { 
   Dialog, 
@@ -27,6 +26,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multiselect"
 import { cn } from "@/lib/utils"
+
+import { CreateTagForm } from "./create-tag/create-tag-form"
+import { CreateTagSchema } from "./create-tag/create-tag.schema"
+import { CreatePocketItemDialog, PocketItemSchema } from "./create-pocket-item-dialog"
 
 export type PocketTag = {
   id: string
@@ -52,10 +55,13 @@ export function DashboardWrapper({
   pocketTags: PocketTag[]
 }) {
   const [items, setItems] = useState<PocketItem[]>(pocketItems)
+  const [tags, setTags] = useState<PocketTag[]>(pocketTags)
   const [nameFilter, setNameFilter] = useState("")
   const [typeFilter, setTypeFilter] = useState<Set<PocketItem["type"]>>(new Set(["article", "video"]))
   const [statusFilter, setStatusFilter] = useState<Set<"completed" | "uncompleted">>(new Set(["completed", "uncompleted"]))
   const [tagFilter, setTagFilter] = useState<string[]>([])
+  const [openCreateTagFormTwo, setOpenCreateTagFormTwo] = useState(false)
+  const [createPocketItemDialogOpen, setCreatePocketItemDialogOpen] = useState(false)
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
 
@@ -71,6 +77,17 @@ export function DashboardWrapper({
 
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const indexedPocketTags = useMemo(() => {
+    return tags.reduce((acc, tag) => {
+      acc[tag.id] = {
+        id: tag.id,
+        name: tag.name
+      }
+
+      return acc
+    }, {} as Record<string, PocketTag>)
+  }, [tags])
 
   const filteredItems = useMemo(() => {
     return items
@@ -89,7 +106,35 @@ export function DashboardWrapper({
       .filter(item => tagFilter.every(tagId => item.tags.some(itemTag => itemTag.id === tagId)))
   }, [items, nameFilter, tagFilter, statusFilter, typeFilter])
 
+  const handleAddTagSuccess = (values: CreateTagSchema) => {
+    setTags(prev => [...prev, {...values}])
+  }
+
+  const handleCreatePocketItemSuccess = (values: PocketItemSchema) => {
+    const pocketItem: PocketItem = {
+      ...values,
+      completed: false,
+      createdAt: new Date(),
+      tags: values.tags.map(tagId => ({ id: tagId, name: indexedPocketTags[tagId].name }))
+    }
+
+    setItems(prev => {
+      const newItems = [...prev, pocketItem]
+
+      return newItems
+    })
+
+    setCreatePocketItemDialogOpen(false)
+  }
+
   return (
+    <>
+    <CreatePocketItemDialog 
+      open={createPocketItemDialogOpen}
+      onOpenChange={setCreatePocketItemDialogOpen}
+      onSuccess={handleCreatePocketItemSuccess}
+      pocketTags={tags}
+    />
     <div className="container mx-auto px-4 py-6 z-10 relative">
       <div className="mb-6 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -103,19 +148,10 @@ export function DashboardWrapper({
             />
           </div>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="shrink-0">
-                <Plus className="h-4 w-4" />
-                Add to Pocket
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Item</DialogTitle>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <Button className="shrink-0" onClick={() => setCreatePocketItemDialogOpen(true)}>
+            <Plus className="h-4 w-4" />
+            Add to Pocket
+          </Button>
         </div>
 
         <div 
@@ -233,13 +269,13 @@ export function DashboardWrapper({
               </DialogHeader>
               <div className="flex flex-wrap gap-2">
                 <MultiSelect 
-                  options={pocketTags.map(tag => ({ label: tag.name, value: tag.id }))}
+                  options={tags.map(tag => ({ label: tag.name, value: tag.id }))}
                   onValueChange={setTagFilter}
                   defaultValue={tagFilter}
                   placeholder="Select tags..."
                   maxCount={3}
                 />
-                <Dialog>
+                <Dialog open={openCreateTagFormTwo} onOpenChange={setOpenCreateTagFormTwo}>
                   <DialogTrigger asChild>
                     <Button className="shrink-0">
                       <Plus className="h-4 w-4" />
@@ -251,13 +287,17 @@ export function DashboardWrapper({
                       <DialogTitle>Add Tag</DialogTitle>
                     </DialogHeader>
                   </DialogContent>
+                  <CreateTagForm 
+                    tags={tags}
+                    onSuccess={handleAddTagSuccess}
+                  />
                 </Dialog>
               </div>
             </DialogContent>
           </Dialog>
           <div className="hidden md:flex gap-2">
             <MultiSelect 
-              options={pocketTags.map(tag => ({ label: tag.name, value: tag.id }))}
+              options={tags.map(tag => ({ label: tag.name, value: tag.id }))}
               onValueChange={setTagFilter}
               defaultValue={tagFilter}
               placeholder="Select tags..."
@@ -305,17 +345,17 @@ export function DashboardWrapper({
               className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300"
             >
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center max-w-full">
                   <div className="flex items-center gap-1 grow truncate">
                     {item.type === "article" && <FileText className="h-4 w-4 text-red-500"/>}
                     {item.type === "video" && <Video className="h-4 w-4 text-blue-500"/>}
-                    {item.name}
+                    <p className="truncate">{item.name}</p>
                   </div>
                   <div className="flex">
-                    <Button variant="ghost">
+                    <Button variant="ghost" size="icon">
                       {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
                     </Button>
-                    <Button variant="ghost">
+                    <Button variant="ghost" size="sm">
                       <X className="text-destructive" />
                     </Button>
                   </div>
@@ -368,5 +408,6 @@ export function DashboardWrapper({
         )}
       </div>
     </div>
+    </>
   )
 }
