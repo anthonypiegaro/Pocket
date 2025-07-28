@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils"
 
 import { CreatePocketItemDialog, PocketItemSchema } from "./create-pocket-item-dialog"
 import { DeletePocketItemDialog } from "./delete-pocket-item-dialog"
+import { CreatePocketTagDialog, CreatePocketTagSchema } from "./create-pocket-tag-dialog"
 import { updatePocketItemCompleted } from "./update-pocket-item-complete.action"
 
 export type PocketTag = {
@@ -60,23 +61,25 @@ export function DashboardWrapper({
   const [typeFilter, setTypeFilter] = useState<Set<PocketItem["type"]>>(new Set(["article", "video"]))
   const [statusFilter, setStatusFilter] = useState<Set<"completed" | "uncompleted">>(new Set(["completed", "uncompleted"]))
   const [tagFilter, setTagFilter] = useState<string[]>([])
-  const [openCreateTagFormTwo, setOpenCreateTagFormTwo] = useState(false)
   const [createPocketItemDialogOpen, setCreatePocketItemDialogOpen] = useState(false)
   const [pocketItemDelete, setPocketItemDelete] = useState<{ id: string, name: string }>({ id: "", name: ""})
+  const [createPocketTagDialogOpen, setCreatePocketTagDialogOpen] = useState(false)
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const scrollContainer = document.getElementById("dashboard-scroll") || window
+
     const handleScroll = () => {
       if (!filterBar.current) return
       const rect = filterBar.current.getBoundingClientRect()
-      setShowSearchButton(rect.top <= 18)
+      setShowSearchButton(rect.top <= 0)
     }
 
-    window.addEventListener("scroll", handleScroll)
+    scrollContainer.addEventListener("scroll", handleScroll)
     handleScroll()
 
-    return () => window.removeEventListener("scroll", handleScroll)
+    return () => scrollContainer.removeEventListener("scroll", handleScroll)
   }, [])
 
   const indexedPocketTags = useMemo(() => {
@@ -154,6 +157,15 @@ export function DashboardWrapper({
     setPocketItemDelete({ id: "", name: "" })
   }
 
+  const handleCreatePocketTagSuccess = (pocketTag: CreatePocketTagSchema) => {
+    setTags(prev => {
+      const newTags = [...prev, pocketTag]
+      return newTags
+    })
+
+    setCreatePocketTagDialogOpen(false)
+  }
+
   return (
     <>
     <CreatePocketItemDialog 
@@ -168,11 +180,16 @@ export function DashboardWrapper({
       onSuccess={handlePocketItemDeleteSuccess}
       id={pocketItemDelete.id}
       name={pocketItemDelete.name}
-
+    />
+    <CreatePocketTagDialog 
+      open={createPocketTagDialogOpen}
+      onOpenChange={setCreatePocketTagDialogOpen}
+      onSuccess={handleCreatePocketTagSuccess}
+      pocketTags={tags}
     />
     <div className="container mx-auto px-4 py-6 z-10 relative">
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-1">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input 
@@ -190,7 +207,7 @@ export function DashboardWrapper({
         </div>
 
         <div 
-          className="sticky top-4 z-40 flex flex-wrap gap-2 items-center backdrop-blur-sm" 
+          className="sticky top-0 z-40 py-4 flex flex-wrap gap-2 items-center backdrop-blur-sm" 
           ref={filterBar}
         >
           <Filter className="h-4 w-4 text-muted-foreground" />
@@ -310,19 +327,13 @@ export function DashboardWrapper({
                   placeholder="Select tags..."
                   maxCount={3}
                 />
-                <Dialog open={openCreateTagFormTwo} onOpenChange={setOpenCreateTagFormTwo}>
-                  <DialogTrigger asChild>
-                    <Button className="shrink-0">
-                      <Plus className="h-4 w-4" />
-                      Add Pocket Tag
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add Tag</DialogTitle>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
+                <Button 
+                  variant="ghost"
+                  className="text-muted-foreground px-0 ml-auto"
+                  onClick={() => setCreatePocketTagDialogOpen(true)}
+                >
+                  Add Pocket Tag
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -335,19 +346,10 @@ export function DashboardWrapper({
               maxCount={3}
               className="w-sm max-w-sm"
             />
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button className="shrink-0">
-                  <Plus className="h-4 w-4" />
-                  Add Pocket Tag
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add Tag</DialogTitle>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <Button className="shrink-0" onClick={() => setCreatePocketTagDialogOpen(true)}>
+              <Plus className="h-4 w-4" />
+              Add Pocket Tag
+            </Button>
           </div>
           <Dialog>
             <DialogTrigger asChild>
@@ -373,7 +375,7 @@ export function DashboardWrapper({
           {filteredItems.map((item) => (
             <Card
               key={item.id}
-              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
+              className="group hover:shadow-md transition-shadow bg-card/60 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
             >
               <CardHeader>
                 <div className="flex justify-between items-center max-w-full">

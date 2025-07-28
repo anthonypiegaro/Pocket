@@ -121,6 +121,59 @@
   }
 }
 
+@layer utilities {
+  @keyframes gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes gradient-shift-reverse {
+    0%,
+    100% {
+      background-position: 100% 50%;
+    }
+    50% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes gradient-shift-slow {
+    0%,
+    100% {
+      background-position: 0% 0%;
+    }
+    25% {
+      background-position: 100% 100%;
+    }
+    50% {
+      background-position: 0% 100%;
+    }
+    75% {
+      background-position: 100% 0%;
+    }
+  }
+
+  .animate-gradient-shift {
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  .animate-gradient-shift-reverse {
+    background-size: 400% 400%;
+    animation: gradient-shift-reverse 12s ease infinite;
+  }
+
+  .animate-gradient-shift-slow {
+    background-size: 400% 400%;
+    animation: gradient-shift-slow 15s ease infinite;
+  }
+}
+
 /* ===== Below for Google button ===== */
 .gsi-material-button {
   -moz-user-select: none;
