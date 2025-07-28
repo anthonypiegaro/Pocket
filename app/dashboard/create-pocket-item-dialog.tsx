@@ -1,7 +1,6 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Plus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { v4 as uuidv4} from "uuid"
 import * as z from "zod/v4"
@@ -11,8 +10,7 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from "@/components/ui/dialog"
 import {
   Form,
@@ -131,7 +129,7 @@ export function CreatePocketItemDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>

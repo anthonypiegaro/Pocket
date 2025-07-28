@@ -2,14 +2,13 @@
 
 import { headers } from "next/headers"
 import { redirect } from "next/navigation"
+import { and, eq } from "drizzle-orm"
 
 import { db } from "@/db/db"
-import { pocketTag } from "@/db/schema"
+import { pocketItem } from "@/db/schema"
 import { auth } from "@/lib/auth"
 
-import { CreateTagSchema } from "./create-tag.schema"
-
-export const createTag = async (values: CreateTagSchema) => {
+export const deletePocketItem = async (id: string) => {
   const session = await auth.api.getSession({
     headers: await headers()
   })
@@ -20,9 +19,8 @@ export const createTag = async (values: CreateTagSchema) => {
 
   const userId = session.user.id
 
-  await db.insert(pocketTag).values({
-    id: values.id,
-    name: values.name,
-    userId
-  })
+  await db.delete(pocketItem).where(and(
+    eq(pocketItem.id, id),
+    eq(pocketItem.userId, userId)
+  ))
 }

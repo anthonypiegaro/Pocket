@@ -27,9 +27,9 @@ import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multiselect"
 import { cn } from "@/lib/utils"
 
-import { CreateTagForm } from "./create-tag/create-tag-form"
-import { CreateTagSchema } from "./create-tag/create-tag.schema"
 import { CreatePocketItemDialog, PocketItemSchema } from "./create-pocket-item-dialog"
+import { DeletePocketItemDialog } from "./delete-pocket-item-dialog"
+import { updatePocketItemCompleted } from "./update-pocket-item-complete.action"
 
 export type PocketTag = {
   id: string
@@ -62,6 +62,7 @@ export function DashboardWrapper({
   const [tagFilter, setTagFilter] = useState<string[]>([])
   const [openCreateTagFormTwo, setOpenCreateTagFormTwo] = useState(false)
   const [createPocketItemDialogOpen, setCreatePocketItemDialogOpen] = useState(false)
+  const [pocketItemDelete, setPocketItemDelete] = useState<{ id: string, name: string }>({ id: "", name: ""})
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
 
@@ -106,10 +107,6 @@ export function DashboardWrapper({
       .filter(item => tagFilter.every(tagId => item.tags.some(itemTag => itemTag.id === tagId)))
   }, [items, nameFilter, tagFilter, statusFilter, typeFilter])
 
-  const handleAddTagSuccess = (values: CreateTagSchema) => {
-    setTags(prev => [...prev, {...values}])
-  }
-
   const handleCreatePocketItemSuccess = (values: PocketItemSchema) => {
     const pocketItem: PocketItem = {
       ...values,
@@ -127,6 +124,36 @@ export function DashboardWrapper({
     setCreatePocketItemDialogOpen(false)
   }
 
+  const handlePocketItemCompleteUpdate = ({ id, completed }: { id: string, completed: boolean }) => {
+    updatePocketItemCompleted({ id, completed })
+    setItems(prev => prev.map(item => {
+      if (item.id !== id) {
+        return item
+      }
+
+      const updatedItem = {...item, completed: completed }
+
+      return updatedItem
+    }))
+  }
+
+  const openDeletePocketItemDialog = ({ id, name }: { id: string, name: string }) => {
+    setPocketItemDelete({ id, name })
+  }
+
+  const deletePocketItemDialogOpen = pocketItemDelete.id !== ""
+
+  const handleDeletePocketItemDialogOpenChange = (open: boolean) => {
+    if (!open) {
+      setPocketItemDelete({ id: "", name: "" })
+    }
+  }
+
+  const handlePocketItemDeleteSuccess = (id: string) => {
+    setItems(prev => prev.filter(item => item.id !== id))
+    setPocketItemDelete({ id: "", name: "" })
+  }
+
   return (
     <>
     <CreatePocketItemDialog 
@@ -134,6 +161,14 @@ export function DashboardWrapper({
       onOpenChange={setCreatePocketItemDialogOpen}
       onSuccess={handleCreatePocketItemSuccess}
       pocketTags={tags}
+    />
+    <DeletePocketItemDialog 
+      open={deletePocketItemDialogOpen}
+      onOpenChange={handleDeletePocketItemDialogOpenChange}
+      onSuccess={handlePocketItemDeleteSuccess}
+      id={pocketItemDelete.id}
+      name={pocketItemDelete.name}
+
     />
     <div className="container mx-auto px-4 py-6 z-10 relative">
       <div className="mb-6 space-y-4">
@@ -287,10 +322,6 @@ export function DashboardWrapper({
                       <DialogTitle>Add Tag</DialogTitle>
                     </DialogHeader>
                   </DialogContent>
-                  <CreateTagForm 
-                    tags={tags}
-                    onSuccess={handleAddTagSuccess}
-                  />
                 </Dialog>
               </div>
             </DialogContent>
@@ -352,19 +383,25 @@ export function DashboardWrapper({
                     <p className="truncate">{item.name}</p>
                   </div>
                   <div className="flex">
-                    <Button variant="ghost" size="icon">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => updatePocketItemCompleted({ id: item.id, completed: !item.completed })}
+                    >
                       {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => openDeletePocketItemDialog({ id: item.id, name: item.name })}>
                       <X className="text-destructive" />
                     </Button>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-0">
+                <div className="h-12 truncate">
                 {item.description && (
                   <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
                 )}
+                </div>
 
                 <div className="flex flex-wrap gap-1 mb-3">
                   {item.tags.map((tag) => (
@@ -374,7 +411,7 @@ export function DashboardWrapper({
                   ))}
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>
                   <Button variant="ghost" size="sm" asChild className="h-8 px-2">
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
