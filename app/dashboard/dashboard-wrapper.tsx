@@ -31,6 +31,7 @@ import { CreatePocketItemDialog, PocketItemSchema } from "./create-pocket-item-d
 import { DeletePocketItemDialog } from "./delete-pocket-item-dialog"
 import { CreatePocketTagDialog, CreatePocketTagSchema } from "./create-pocket-tag-dialog"
 import { updatePocketItemCompleted } from "./update-pocket-item-complete.action"
+import { EditPocketItemDialog, EditPocketItemSchema } from "./edit-pocket-item-dialog"
 
 export type PocketTag = {
   id: string
@@ -64,6 +65,7 @@ export function DashboardWrapper({
   const [createPocketItemDialogOpen, setCreatePocketItemDialogOpen] = useState(false)
   const [pocketItemDelete, setPocketItemDelete] = useState<{ id: string, name: string }>({ id: "", name: ""})
   const [createPocketTagDialogOpen, setCreatePocketTagDialogOpen] = useState(false)
+  const [editPocketItem, setEditPocketItem] = useState<EditPocketItemSchema>()
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
 
@@ -166,6 +168,39 @@ export function DashboardWrapper({
     setCreatePocketTagDialogOpen(false)
   }
 
+  const editPocketDialogOpen = editPocketItem ? true : false
+
+  const handleEditPocketItemOpenChange = (open: boolean) => {
+    if (!open) {
+      setEditPocketItem(undefined)
+    }
+  }
+
+  const handleEditPocketItemSuccess = (pocketItem: EditPocketItemSchema) => {
+    setItems(prev => {
+      const newItems = prev.map(item => {
+        if (item.id !== pocketItem.id) {
+          return item
+        }
+
+        const updatedItem = {
+          ...item,
+          name: pocketItem.name,
+          description: pocketItem.description,
+          url: pocketItem.url,
+          type: pocketItem.type,
+          tags: pocketItem.tags.map(tagId => ({ id: tagId, name: indexedPocketTags[tagId].name }))
+        }
+
+        return updatedItem
+      })
+
+      return newItems
+    })
+
+    setEditPocketItem(undefined)
+  }
+
   return (
     <>
     <CreatePocketItemDialog 
@@ -186,6 +221,20 @@ export function DashboardWrapper({
       onOpenChange={setCreatePocketTagDialogOpen}
       onSuccess={handleCreatePocketTagSuccess}
       pocketTags={tags}
+    />
+    <EditPocketItemDialog
+      open={editPocketDialogOpen}
+      onOpenChange={handleEditPocketItemOpenChange}
+      onSuccess={handleEditPocketItemSuccess}
+      pocketTags={tags}
+      pocketItem={editPocketItem || {
+        id: "",
+        name: "",
+        type: "article",
+        url: "",
+        description: "",
+        tags: []
+      }}
     />
     <div className="container mx-auto px-4 py-6 z-10 relative">
       <div className="mb-6">
@@ -375,7 +424,15 @@ export function DashboardWrapper({
           {filteredItems.map((item) => (
             <Card
               key={item.id}
-              className="group hover:shadow-md transition-shadow bg-card/60 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
+              className="group cursor-pointer hover:shadow-md transition-shadow bg-card/60 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
+              onClick={() => setEditPocketItem({
+                id: item.id,
+                name: item.name,
+                url: item.url,
+                description: item.description,
+                type: item.type,
+                tags: item.tags.map(tag => tag.id)
+              })}
             >
               <CardHeader>
                 <div className="flex justify-between items-center max-w-full">
@@ -388,11 +445,21 @@ export function DashboardWrapper({
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      onClick={() => handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })}
+                      onClick={e => {
+                        e.stopPropagation()
+                        handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })
+                      }}
                     >
                       {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => openDeletePocketItemDialog({ id: item.id, name: item.name })}>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={e => {
+                        e.stopPropagation()
+                        openDeletePocketItemDialog({ id: item.id, name: item.name })
+                      }}
+                    >
                       <X className="text-destructive" />
                     </Button>
                   </div>
