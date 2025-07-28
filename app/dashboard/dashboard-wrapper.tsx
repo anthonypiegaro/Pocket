@@ -373,7 +373,7 @@ export function DashboardWrapper({
           {filteredItems.map((item) => (
             <Card
               key={item.id}
-              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300"
+              className="group hover:shadow-md transition-shadow bg-card/50 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
             >
               <CardHeader>
                 <div className="flex justify-between items-center max-w-full">
@@ -382,11 +382,11 @@ export function DashboardWrapper({
                     {item.type === "video" && <Video className="h-4 w-4 text-blue-500"/>}
                     <p className="truncate">{item.name}</p>
                   </div>
-                  <div className="flex">
+                  <div className="flex items-center">
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      onClick={() => updatePocketItemCompleted({ id: item.id, completed: !item.completed })}
+                      onClick={() => handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })}
                     >
                       {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
                     </Button>
@@ -396,19 +396,18 @@ export function DashboardWrapper({
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="pt-0">
-                <div className="h-12 truncate">
-                {item.description && (
-                  <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
-                )}
-                </div>
-
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {item.tags.map((tag) => (
-                    <Badge key={tag.id} variant="secondary" className="text-xs">
-                      {tag.name}
-                    </Badge>
-                  ))}
+              <CardContent className="pt-0 flex flex-col justufy-between grow">
+                <div>
+                  {item.description && (
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2 break-words">{item.description}</p>
+                  )}
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {item.tags.map((tag) => (
+                      <Badge key={tag.id} variant="secondary" className="text-xs">
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between mt-auto">
