@@ -32,6 +32,7 @@ import { DeletePocketItemDialog } from "./delete-pocket-item-dialog"
 import { CreatePocketTagDialog, CreatePocketTagSchema } from "./create-pocket-tag-dialog"
 import { updatePocketItemCompleted } from "./update-pocket-item-complete.action"
 import { EditPocketItemDialog, EditPocketItemSchema } from "./edit-pocket-item-dialog"
+import { NameFilterDialog } from "./name-filter-dialog"
 
 export type PocketTag = {
   id: string
@@ -66,6 +67,7 @@ export function DashboardWrapper({
   const [pocketItemDelete, setPocketItemDelete] = useState<{ id: string, name: string }>({ id: "", name: ""})
   const [createPocketTagDialogOpen, setCreatePocketTagDialogOpen] = useState(false)
   const [editPocketItem, setEditPocketItem] = useState<EditPocketItemSchema>()
+  const [nameFilterDialogOpen, setNameFilterDialogOpen] = useState(false)
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
 
@@ -236,6 +238,12 @@ export function DashboardWrapper({
         tags: []
       }}
     />
+    <NameFilterDialog 
+      value={nameFilter}
+      onValueChange={setNameFilter}
+      open={nameFilterDialogOpen}
+      onOpenChange={setNameFilterDialogOpen}
+    />
     <div className="container mx-auto px-4 py-6 z-10 relative">
       <div className="mb-6">
         <div className="flex flex-col sm:flex-row gap-4 mb-1">
@@ -400,24 +408,16 @@ export function DashboardWrapper({
               Add Pocket Tag
             </Button>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline"
-                className={cn(
-                  "transition-all duration-300 opacity-0 -translate-y-2",
-                  showSearchButton && "opacity-100 translate-y-0"
-                )}
-              >
-                Search
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Search</DialogTitle>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <Button 
+            variant="outline"
+            className={cn(
+              "transition-all duration-300 opacity-0 -translate-y-2",
+              showSearchButton && "opacity-100 translate-y-0"
+            )}
+            onClick={() => setNameFilterDialogOpen(true)}
+          >
+            Search
+          </Button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
