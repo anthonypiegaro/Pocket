@@ -32,5 +32,5 @@ export const getPocketTags = async (): Promise<PocketTag[]> => {
     )
   })
 
-  return pocketTags
+  return sortedPocketTags
 }
