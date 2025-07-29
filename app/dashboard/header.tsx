@@ -3,8 +3,6 @@
 import { useTheme } from "next-themes"
 import { BookHeart, Moon, Sun } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-
 import { ProfileButton } from "./profile-button"
 
 export function Header() {

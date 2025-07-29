@@ -445,20 +445,6 @@ export function DashboardWrapper({
               </div>
             </DialogContent>
           </Dialog>
-          {/* <div className="hidden md:flex gap-2">
-            <MultiSelect 
-              options={tags.map(tag => ({ label: tag.name, value: tag.id }))}
-              onValueChange={setTagFilter}
-              defaultValue={tagFilter}
-              placeholder="Select tags..."
-              maxCount={3}
-              className="w-sm max-w-sm"
-            />
-            <Button className="shrink-0" onClick={() => setCreatePocketTagDialogOpen(true)}>
-              <Plus className="h-4 w-4" />
-              Add Pocket Tag
-            </Button>
-          </div> */}
           <Button 
             variant="outline"
             className={cn(
