@@ -69,6 +69,10 @@ export function CreatePocketTagDialog({
       })
     } else {
       createPocketTag(values)
+      form.reset({
+        id: uuidv4(),
+        name: ""
+      })
       onSuccess(values)
     }
   }
@@ -82,7 +86,7 @@ export function CreatePocketTagDialog({
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form className="flex flex-col gap-y-4">
+          <form className="flex flex-col gap-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField 
               control={form.control}
               name="name"
@@ -96,7 +100,7 @@ export function CreatePocketTagDialog({
                 </FormItem>
               )}
             />
-            <Button className="ml-auto" onClick={form.handleSubmit(onSubmit)}>
+            <Button className="ml-auto">
               Add Pocket Tag
             </Button>
           </form>

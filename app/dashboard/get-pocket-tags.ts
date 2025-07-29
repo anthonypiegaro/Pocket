@@ -25,6 +25,12 @@ export const getPocketTags = async (): Promise<PocketTag[]> => {
     .select({ id: pocketTag.id, name: pocketTag.name })
     .from(pocketTag)
     .where(eq(pocketTag.userId, userId))
+  
+  const sortedPocketTags = pocketTags.sort((a, b) => {
+    return a.name.toLowerCase().localeCompare(
+      b.name.toLocaleLowerCase()
+    )
+  })
 
   return pocketTags
 }

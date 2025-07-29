@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pocket",
   description: "Organize your articles and videos",
+  other: {
+    "apple-mobile-web-app-title": "Pocket",
+  },
 };
 
 export default function RootLayout({

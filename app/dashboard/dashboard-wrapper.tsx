@@ -33,6 +33,7 @@ import { CreatePocketTagDialog, CreatePocketTagSchema } from "./create-pocket-ta
 import { updatePocketItemCompleted } from "./update-pocket-item-complete.action"
 import { EditPocketItemDialog, EditPocketItemSchema } from "./edit-pocket-item-dialog"
 import { NameFilterDialog } from "./name-filter-dialog"
+import { EditPocketTagDialog, EditPocketTagSchema } from "./edit-pocket-tag-dialog"
 
 export type PocketTag = {
   id: string
@@ -67,6 +68,7 @@ export function DashboardWrapper({
   const [pocketItemDelete, setPocketItemDelete] = useState<{ id: string, name: string }>({ id: "", name: ""})
   const [createPocketTagDialogOpen, setCreatePocketTagDialogOpen] = useState(false)
   const [editPocketItem, setEditPocketItem] = useState<EditPocketItemSchema>()
+  const [editPocketTagDialogOpen, setEditPocketTagDialogOpen] = useState(false)
   const [nameFilterDialogOpen, setNameFilterDialogOpen] = useState(false)
   const [showSearchButton, setShowSearchButton] = useState(false)
   const filterBar = useRef<HTMLDivElement>(null)
@@ -203,6 +205,39 @@ export function DashboardWrapper({
     setEditPocketItem(undefined)
   }
 
+  const handlePocketTagDelete = (id: string) => {
+    setTags(prev => prev.filter(tag => tag.id !== id))
+
+    setItems(prev => prev.map(item => ({
+      ...item,
+      tags: item.tags.filter(tag => tag.id !== id)
+    })))
+
+    setEditPocketTagDialogOpen(false)
+  }
+
+  const handleEditPocketTagSuccess = (pocketTag: EditPocketTagSchema) => {
+    setTags(prev => prev.map(tag => {
+      if (tag.id !== pocketTag.id) {
+        return tag
+      } {
+        return pocketTag
+      }
+    }))
+
+    setItems(prev => prev.map(item => {
+      const newItem = {
+        ...item,
+        tags: item.tags.map(tag => ({
+          id: tag.id,
+          name: (tag.id === pocketTag.id) ? pocketTag.name : tag.name
+        }))
+      }
+      return newItem
+    }))
+    setEditPocketTagDialogOpen(false)
+  }
+
   return (
     <>
     <CreatePocketItemDialog 
@@ -237,6 +272,13 @@ export function DashboardWrapper({
         description: "",
         tags: []
       }}
+    />
+    <EditPocketTagDialog 
+      open={editPocketTagDialogOpen}
+      onOpenChange={setEditPocketTagDialogOpen}
+      onEditSuccess={handleEditPocketTagSuccess}
+      onDeleteSuccess={handlePocketTagDelete}
+      pocketTags={tags}
     />
     <NameFilterDialog 
       value={nameFilter}
@@ -366,7 +408,7 @@ export function DashboardWrapper({
           </DropdownMenu>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" className="md:hidden">
+              <Button variant="outline">
                 Tags
               </Button>
             </DialogTrigger>
@@ -384,17 +426,26 @@ export function DashboardWrapper({
                   placeholder="Select tags..."
                   maxCount={3}
                 />
-                <Button 
-                  variant="ghost"
-                  className="text-muted-foreground px-0 ml-auto"
-                  onClick={() => setCreatePocketTagDialogOpen(true)}
-                >
-                  Add Pocket Tag
-                </Button>
+                <div className="flex w-full justify-between">
+                  <Button
+                    variant="ghost"
+                    className="text-muted-foreground px-0 lg:px-2"
+                    onClick={() => setEditPocketTagDialogOpen(true)}
+                  >
+                    Edit Pocket Tag
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    className="text-muted-foreground px-0 lg:px-2"
+                    onClick={() => setCreatePocketTagDialogOpen(true)}
+                  >
+                    Add Pocket Tag
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
-          <div className="hidden md:flex gap-2">
+          {/* <div className="hidden md:flex gap-2">
             <MultiSelect 
               options={tags.map(tag => ({ label: tag.name, value: tag.id }))}
               onValueChange={setTagFilter}
@@ -407,7 +458,7 @@ export function DashboardWrapper({
               <Plus className="h-4 w-4" />
               Add Pocket Tag
             </Button>
-          </div>
+          </div> */}
           <Button 
             variant="outline"
             className={cn(
