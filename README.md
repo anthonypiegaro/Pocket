@@ -1,9 +1,8 @@
-<div style="display:flex;flex-direction:row;justify-content:center">
+<div align="center">
    <img src="public/book-heart.svg" alt="Pocket Icon" width="100" style="vertical-align:middle;margin-right:8px" fill="red"/>
-   <span style="vertical-align:middle;font-size:100px;font-weight:700;color:rgb(90, 90, 90)">Pocket</span>
 </div>
 
-<div style="width:100%;height:2px;background-color:rgb(90,90,90);border-radius:50px;margin-bottom:10px;"></div>
+---
 
 <div align="center" >
 
