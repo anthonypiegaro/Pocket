@@ -166,7 +166,7 @@ export function DashboardWrapper({
   const handleCreatePocketTagSuccess = (pocketTag: CreatePocketTagSchema) => {
     setTags(prev => {
       const newTags = [...prev, pocketTag]
-      return newTags
+      return newTags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
     })
 
     setCreatePocketTagDialogOpen(false)
@@ -217,13 +217,17 @@ export function DashboardWrapper({
   }
 
   const handleEditPocketTagSuccess = (pocketTag: EditPocketTagSchema) => {
-    setTags(prev => prev.map(tag => {
-      if (tag.id !== pocketTag.id) {
-        return tag
-      } {
-        return pocketTag
-      }
-    }))
+    setTags(prev => {
+      const newTags = prev.map(tag => {
+        if (tag.id !== pocketTag.id) {
+          return tag
+        } {
+          return pocketTag
+        }
+      })
+
+      return newTags.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+    })
 
     setItems(prev => prev.map(item => {
       const newItem = {
@@ -425,6 +429,7 @@ export function DashboardWrapper({
                   defaultValue={tagFilter}
                   placeholder="Select tags..."
                   maxCount={3}
+                  modalPopover
                 />
                 <div className="flex w-full justify-between">
                   <Button
@@ -518,7 +523,7 @@ export function DashboardWrapper({
 
                 <div className="flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>
-                  <Button variant="ghost" size="sm" asChild className="h-8 px-2">
+                  <Button variant="ghost" size="sm" asChild className="h-8 px-2" onClick={e => e.stopPropagation()}>
                     <a href={item.url} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="h-3 w-3" />
                     </a>

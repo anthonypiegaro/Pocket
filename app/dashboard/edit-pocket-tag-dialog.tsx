@@ -77,7 +77,7 @@ export function EditPocketTagDialog({
           </DialogTitle>
         </DialogHeader>
         <PocketTagsList selectPocketTag={setEditPocketTag} pocketTags={pocketTags}/>
-        <FormDialog 
+        <FormDialog
           open={editPocketTag !== undefined}
           onOpenChange={handleFormDialogOpenChange}
           onSuccess={handleEditPocketTagSuccess}
@@ -249,19 +249,20 @@ function FormDialog({
                   </FormItem>
                 )}
               />
-            </form>
-            <div className="flex w-full justify-between">
-              <Button 
-                variant="destructive" 
-                disabled={form.formState.isDirty}
-                onClick={() => setDeletePocketTagDialogOpen(true)}
-              >
-                Delete
-              </Button>
-              <Button disabled={!form.formState.isDirty}>
-                Save
-              </Button>
+              <div className="flex w-full justify-between mt-4">
+                <Button 
+                  variant="destructive" 
+                  disabled={form.formState.isDirty}
+                  onClick={() => setDeletePocketTagDialogOpen(true)}
+                  type="button"
+                >
+                  Delete
+                </Button>
+                <Button disabled={!form.formState.isDirty} type="submit">
+                  Save
+                </Button>
             </div>
+            </form>
           </Form> 
         </DialogContent>
       </Dialog>
