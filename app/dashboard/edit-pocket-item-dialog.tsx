@@ -73,6 +73,7 @@ export function EditPocketItemDialog({
 
   const onSubmit = (values: EditPocketItemSchema) => {
     editPocketItem(values)
+    setEditModeOn(false)
     onSuccess(values)
   }
 
