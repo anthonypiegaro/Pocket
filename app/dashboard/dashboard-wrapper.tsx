@@ -476,35 +476,33 @@ export function DashboardWrapper({
                 tags: item.tags.map(tag => tag.id)
               })}
             >
-              <CardHeader>
-                <div className="flex justify-between items-center max-w-full">
-                  <div className="flex items-center gap-1 grow truncate">
-                    {item.type === "article" && <FileText className="h-4 w-4 text-red-500"/>}
-                    {item.type === "video" && <Video className="h-4 w-4 text-blue-500"/>}
-                    <p className="truncate">{item.name}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={e => {
-                        e.stopPropagation()
-                        handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })
-                      }}
-                    >
-                      {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={e => {
-                        e.stopPropagation()
-                        openDeletePocketItemDialog({ id: item.id, name: item.name })
-                      }}
-                    >
-                      <X className="text-destructive" />
-                    </Button>
-                  </div>
+              <CardHeader className="flex flex-row flex-nowrap items-center justify-between gap-4">
+                <div className="flex items-center gap-1 min-w-0">
+                  {item.type === "article" && <FileText className="h-4 w-4 text-red-500 shrink-0"/>}
+                  {item.type === "video" && <Video className="h-4 w-4 text-blue-500 shrink-0"/>}
+                  <p className="truncate">{item.name}</p>
+                </div>
+                <div className="flex items-center shrink-0">
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={e => {
+                      e.stopPropagation()
+                      handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })
+                    }}
+                  >
+                    {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={e => {
+                      e.stopPropagation()
+                      openDeletePocketItemDialog({ id: item.id, name: item.name })
+                    }}
+                  >
+                    <X className="text-destructive" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="pt-0 flex flex-col justufy-between grow">
