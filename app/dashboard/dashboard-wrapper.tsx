@@ -470,11 +470,11 @@ export function DashboardWrapper({
           </Button>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 pt-1">
           {filteredItems.map((item) => (
             <Card
               key={item.id}
-              className="group cursor-pointer hover:shadow-md transition-shadow bg-card/60 backdrop-blur-sm border-border/20 gap-y-0 hover:scale-101 transition-all duration-300 max-w-full"
+              className="group cursor-pointer hover:shadow-md transition-shadow bg-card/60 backdrop-blur-sm ring-1 ring-border border-2 border-card/60 hover:border-border gap-y-0 transition-all duration-150 max-w-full"
               onClick={() => setEditPocketItem({
                 id: item.id,
                 name: item.name,
