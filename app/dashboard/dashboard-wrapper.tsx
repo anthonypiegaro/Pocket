@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
-import { BookHeart, ExternalLink, Eye, EyeOff, FileText, Filter, Plus, Search, Video, X } from "lucide-react"
+import { BookHeart, Clock9, ExternalLink, Eye, EyeOff, FileText, Filter, Plus, RefreshCcw, Search, Video, X } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -53,6 +53,7 @@ export type PocketItem = {
   description: string
   completed: boolean
   createdAt: Date
+  updatedAt: Date
   tags: PocketTag[]
 }
 
@@ -126,6 +127,7 @@ export function DashboardWrapper({
       ...values,
       completed: false,
       createdAt: new Date(),
+      updatedAt: new Date(),
       tags: values.tags.map(tagId => ({ id: tagId, name: indexedPocketTags[tagId].name }))
     }
 
@@ -145,7 +147,7 @@ export function DashboardWrapper({
         return item
       }
 
-      const updatedItem = {...item, completed: completed }
+      const updatedItem = { ...item, completed: completed, updatedAt: new Date() }
 
       return updatedItem
     }))
@@ -198,7 +200,8 @@ export function DashboardWrapper({
           description: pocketItem.description,
           url: pocketItem.url,
           type: pocketItem.type,
-          tags: pocketItem.tags.map(tagId => ({ id: tagId, name: indexedPocketTags[tagId].name }))
+          tags: pocketItem.tags.map(tagId => ({ id: tagId, name: indexedPocketTags[tagId].name })),
+          updatedAt: new Date()
         }
 
         return updatedItem
@@ -539,7 +542,24 @@ export function DashboardWrapper({
                 </div>
 
                 <div className="flex items-center justify-between mt-auto">
-                  <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>
+                  <div className="flex gap-x-3">
+                    <span className="text-xs text-muted-foreground flex items-center">
+                      <Clock9 className="h-4 w-4 mr-1" />
+                      {item.createdAt.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                      })}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex items-center">
+                      <RefreshCcw className="h-4 w-4 mr-1" />
+                      {item.updatedAt.toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric"
+                      })}
+                    </span>
+                  </div>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" size="sm" asChild className="h-8 px-2" onClick={e => e.stopPropagation()}>

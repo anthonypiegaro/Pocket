@@ -29,6 +29,7 @@ export const getPocketItems = async (): Promise<PocketItem[]> => {
       type: pocketItem.type,
       description: pocketItem.description,
       createdAt: pocketItem.createdAt,
+      updatedAt: pocketItem.updatedAt,
       completed: pocketItem.completed,
       pocketTagId: pocketTag.id,
       pocketTagName: pocketTag.name
@@ -47,6 +48,7 @@ export const getPocketItems = async (): Promise<PocketItem[]> => {
         type: item.type,
         description: item.description,
         createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
         completed: item.completed,
         tags: []
       }

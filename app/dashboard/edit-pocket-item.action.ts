@@ -26,7 +26,8 @@ export const editPocketItem = async (values: EditPocketItemSchema) => {
       name: values.name,
       type: values.type,
       url: values.url,
-      description: values.description
+      description: values.description,
+      updatedAt: new Date()
     }).where(and(
       eq(pocketItem.id, values.id),
       eq(pocketItem.userId, userId)
