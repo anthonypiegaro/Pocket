@@ -25,6 +25,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multiselect"
+import { 
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
 import { CreatePocketItemDialog, PocketItemSchema } from "./create-pocket-item-dialog"
@@ -483,26 +488,40 @@ export function DashboardWrapper({
                   <p className="truncate">{item.name}</p>
                 </div>
                 <div className="flex items-center shrink-0">
-                  <Button 
-                    variant="ghost" 
-                    size="icon"
-                    onClick={e => {
-                      e.stopPropagation()
-                      handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })
-                    }}
-                  >
-                    {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={e => {
-                      e.stopPropagation()
-                      openDeletePocketItemDialog({ id: item.id, name: item.name })
-                    }}
-                  >
-                    <X className="text-destructive" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        onClick={e => {
+                          e.stopPropagation()
+                          handlePocketItemCompleteUpdate({ id: item.id, completed: !item.completed })
+                        }}
+                      >
+                        {item.completed ? <Eye className="text-green-600 h-4 w-4" /> : <EyeOff className="h-4 w-4"/>}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent sideOffset={4}>
+                      <p>{item.completed ? "Mark as incomplete" : "Mark as complete"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={e => {
+                          e.stopPropagation()
+                          openDeletePocketItemDialog({ id: item.id, name: item.name })
+                        }}
+                      >
+                        <X className="text-destructive" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent sideOffset={4}>
+                      <p className="text-destructive">Delete Pocket Item</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </CardHeader>
               <CardContent className="pt-0 flex flex-col justufy-between grow">
@@ -521,11 +540,18 @@ export function DashboardWrapper({
 
                 <div className="flex items-center justify-between mt-auto">
                   <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>
-                  <Button variant="ghost" size="sm" asChild className="h-8 px-2" onClick={e => e.stopPropagation()}>
-                    <a href={item.url} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" asChild className="h-8 px-2" onClick={e => e.stopPropagation()}>
+                        <a href={item.url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent sideOffset={4}>
+                      <p>Open {item.type}</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
               </CardContent>
             </Card>
