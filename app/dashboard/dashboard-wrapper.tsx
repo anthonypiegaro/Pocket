@@ -324,7 +324,10 @@ export function DashboardWrapper({
           <Filter className="h-4 w-4 text-muted-foreground" />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">Type</Button>
+              <Button variant="outline" className="relative">
+                {typeFilter.size < 2 && <div className="absolute right-0 top-0 w-3 h-3 rounded-full border border-blue-800 bg-blue-500/90 -translate-y-1/2 translate-x-1/2" />}
+                Type
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuCheckboxItem 
@@ -371,7 +374,8 @@ export function DashboardWrapper({
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="relative">
+                {statusFilter.size < 2 && <div className="absolute right-0 top-0 w-3 h-3 rounded-full border border-blue-800 bg-blue-500/90 -translate-y-1/2 translate-x-1/2" />}
                 Status
               </Button>
             </DropdownMenuTrigger>
@@ -420,7 +424,8 @@ export function DashboardWrapper({
           </DropdownMenu>
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="relative">
+                {tagFilter.length > 0 && <div className="absolute right-0 top-0 w-3 h-3 rounded-full border border-blue-800 bg-blue-500/90 -translate-y-1/2 translate-x-1/2" />}
                 Tags
               </Button>
             </DialogTrigger>
@@ -461,11 +466,12 @@ export function DashboardWrapper({
           <Button 
             variant="outline"
             className={cn(
-              "transition-all duration-300 opacity-0 -translate-y-2",
+              "transition-all duration-300 opacity-0 -translate-y-2 relative",
               showSearchButton && "opacity-100 translate-y-0"
             )}
             onClick={() => setNameFilterDialogOpen(true)}
           >
+            {nameFilter.length > 0 && <div className="absolute right-0 top-0 w-3 h-3 rounded-full border border-blue-800 bg-blue-500/90 -translate-y-1/2 translate-x-1/2" />}
             Search
           </Button>
         </div>
